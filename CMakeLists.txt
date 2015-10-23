@@ -125,7 +125,7 @@ set(STASM_LIB stasm)
 add_library(${STASM_LIB} ${OBJ_MOD1} ${OBJ_STASM})
 target_link_libraries(${STASM_LIB} ${LIBS})
 
-SET(EXECUTABLES minimal minimal2)
+SET(EXECUTABLES minimal minimal2 stasm_camera)
 FOREACH(var ${EXECUTABLES})
 add_executable(${var} apps/${var}.cpp)
 target_link_libraries(${var} ${STASM_LIB} ${LIBS})
