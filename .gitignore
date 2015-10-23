@@ -1,5 +1,6 @@
 # Build
 build/
+nbproject/
 
 # Temporal
 *~
