@@ -111,6 +111,12 @@ ${STASM_BASE_DIR}/tasm/src/tasmmeanshape.cpp
 ${STASM_BASE_DIR}/tasm/src/tasmshapemod.cpp
 )
 
+SET(OBJ_CAMERA
+${STASM_BASE_DIR}/apps/stasm_camera.cpp
+${STASM_BASE_DIR}/apps/appmisc.cpp
+)
+
+
 #SET(OBJ_MDIFF
 #${STASM_BASE_DIR}/apps/mdiff/mdiff.cpp
 #)
@@ -130,7 +136,7 @@ set(STASM_LIB stasm)
 add_library(${STASM_LIB} ${OBJ_MOD1} ${OBJ_STASM})
 target_link_libraries(${STASM_LIB} ${LIBS})
 
-SET(EXECUTABLES minimal minimal2 stasm_camera)
+SET(EXECUTABLES minimal minimal2)
 FOREACH(var ${EXECUTABLES})
 add_executable(${var} apps/${var}.cpp)
 target_link_libraries(${var} ${STASM_LIB} ${LIBS})
@@ -151,6 +157,10 @@ target_link_libraries(${SWAS_EXE} ${STASM_LIB} ${LIBS})
 set(TASM_EXE tasm)
 add_executable(${TASM_EXE} ${OBJ_TASM})
 target_link_libraries(${TASM_EXE} ${STASM_LIB} ${LIBS})
+
+set(CAMERA_EXE stasm_camera)
+add_executable(${CAMERA_EXE} ${OBJ_CAMERA})
+target_link_libraries(${CAMERA_EXE} ${STASM_LIB} ${LIBS})
 
 #set(MDIFF_EXE mdiff)
 #add_executable(${MDIFF_EXE} ${OBJ_MDIFF})
