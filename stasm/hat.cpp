@@ -19,6 +19,11 @@ static const double WINDOW_SIGMA = .5; // gaussian window as frac of patch width
 
 static const double FINAL_SCALE = 10;  // arb but 10 is good for %g printing of descriptors
 
+static const int nhistbins =
+        (1 + GRIDHEIGHT + 1) * (1 + GRIDWIDTH + 1) * (BINS_PER_HIST + 1);
+static vec_double baseVector(nhistbins,0);
+
+
 // Get gradient magnitude and orientation of pixels in given img.
 // We use a [1,-1] convolution mask rather than [1,0,-1] because it gives as good
 // Stasm results and doesn't "waste" pixels on the left and top image boundary.
@@ -311,13 +316,12 @@ void GetHistograms(                // get all histogram bins
 {
     const int npix = SQ(patchwidth); // number of pixels in image patch
 
-    const int nhistbins =
-        (1 + GRIDHEIGHT + 1) * (1 + GRIDWIDTH + 1) * (BINS_PER_HIST + 1);
-
     // resize and clear (the fill is needed if the size of histbins
     // doesn't change, because in that case resize does nothing)
-    histbins.resize(nhistbins);
-    fill(histbins.begin(), histbins.end(), 0.);
+//    histbins.resize(nhistbins);
+//    std::fill(histbins.begin(), histbins.end(), 0.);
+    memcpy(histbins.data(), baseVector.data(), baseVector.size());
+
 
     for (int ipix = 0; ipix < npix; ipix++)
     {
@@ -408,7 +412,7 @@ VEC Hat::Desc_( // return HAT descriptor, Init_ must be called first
     vec_double        histbins;
 #else       // static faster since size rarely changes
     static vec_double mags, orients; // the image patch grad mags and orientations
-    static vec_double histbins;      // the histograms
+    static vec_double histbins(nhistbins,0);
 #endif
 
     GetMagsAndOrients(mags, orients,
