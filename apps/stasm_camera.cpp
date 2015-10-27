@@ -99,7 +99,7 @@ void myProcessImage (CImage &_source, Mat& _dest)
             ))
         Err("stasm_open_image failed:  %s", stasm_lasterr());
     
-    _dest = _source;
+//    _dest = _source;
     
     //Processes faces
     int nFaces = 0;
@@ -116,7 +116,7 @@ void myProcessImage (CImage &_source, Mat& _dest)
         
         nFaces++;
         stasm_printf("Face %d analysis\n", nFaces);
-        myProcessFace(_dest, landmarks, 1);
+        myProcessFace(_dest, landmarks, nFaces);
         
     }
     
@@ -142,13 +142,22 @@ void main1(int argc, const char** argv)
     CImage frame;
     Mat dest;
     camera >> frame;
+    double tics;
     
     for(;;)
     {
+        tics = (double) getTickCount();
+        
+        
         camera >> frame; // get a new frame from camera
         
         myProcessImage(frame, dest);
-                
+        tics = ((double)getTickCount() - tics)/getTickFrequency() * 1000;
+        
+        stringstream fps;
+        fps << "fps: " << setprecision(4) << setw(4) << 1000.0 / tics << " ";
+                                
+        putText(dest, fps.str(), Point(10, 25), CV_FONT_HERSHEY_COMPLEX, 1, Scalar(255, 255, 0));
         imshow(camName, dest);
         
         if(waitKey(30) >= 0) break;
