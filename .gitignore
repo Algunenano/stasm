@@ -33,3 +33,6 @@ nbproject/
 *.exe
 *.out
 *.app
+
+# Log files
+*.log
