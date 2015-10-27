@@ -38,13 +38,13 @@ void myDrawShape(           // draw a shape on an image
         {
             if (dots)
             {
-//                const int ix = cvRound(shape(i, IX)), iy = cvRound(shape(i, IY));
-//                if (ix >= 0 && ix < img.cols && iy >= 0 && iy < img.rows)
-//                {
-//                    img.(iy, ix)[0] = (color >>  0) & 0xff;
-//                    img(iy, ix)[1] = (color >>  8) & 0xff;
-//                    img(iy, ix)[2] = (color >> 16) & 0xff;
-//                }
+                const int ix = cvRound(shape(i, IX)), iy = cvRound(shape(i, IY));
+                if (ix >= 0 && ix < img.cols && iy >= 0 && iy < img.rows)
+                {
+                    img.datastart[3*(ix + iy*img.cols)] = (color >>  0) & 0xff;
+                    img.datastart[3*(ix + iy*img.cols)+1] = (color >>  8) & 0xff;
+                    img.datastart[3*(ix + iy*img.cols)+2] = (color >>  16) & 0xff;
+                }
             }
             else // lines
             {
@@ -79,7 +79,7 @@ void myProcessFace (
     }
     else
         shape = converted_shape;
-    
+
     myDrawShape(_dest, shape, 0xff0000, false, -1);
     
 }
@@ -88,19 +88,21 @@ void myProcessFace (
 void myProcessImage (CImage &_source, Mat& _dest)
 {
     cvtColor(_source, _dest, CV_BGR2GRAY);
-    
+  
     if (!stasm_open_image(
             (const char*)_dest.data,
             _dest.cols,
             _dest.rows,
             "Camera", //used for err msgs and debug
-            0, //ALLOW MULTIPLES FACES
+            1, //ALLOW MULTIPLES FACES
             25 //MINIMUN WIDTH %
             ))
         Err("stasm_open_image failed:  %s", stasm_lasterr());
     
+    _dest = _source;
     
-
+    //Processes faces
+    int nFaces = 0;
     for (;;)
     {
         float landmarks [2 * stasm_NLANDMARKS];
@@ -111,8 +113,9 @@ void myProcessImage (CImage &_source, Mat& _dest)
 
         if (!foundface)
             break; // note break
-        stasm_printf("Face found\n");
         
+        nFaces++;
+        stasm_printf("Face %d analysis\n", nFaces);
         myProcessFace(_dest, landmarks, 1);
         
     }
